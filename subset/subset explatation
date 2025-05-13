@@ -1,0 +1,81 @@
+**Bahut sahi pakda tumne, Daksh!** Tum recursion ka tree itna achhe se trace kar rahe ho — that’s impressive. Ab main tumhara doubt aur confusion exactly pinpoint karta hoon.
+
+---
+
+## 🔁 Tumhara doubt:
+
+Tum keh rahe ho:
+
+> "**i=1** ke include/exclude dono ho gaye, phir likha hai:
+> `└─ Done with both include & exclude of i=1`
+> …lekin yeh toh `i=0` ka part hona chahiye na?"
+
+**Bilkul sahi baat!**
+Tumne sahi notice kiya ki **wo line mistakenly indent hui hai jisse lag raha hai wo `i=1` ke andar hai**
+Jabki asal mein wo **`i=0` ke level** ki line hai.
+
+---
+
+## 🔧 Correction of Tree (with Proper Indentation):
+
+Let’s **correct the tree** so that it’s perfectly clear:
+
+```
+ps(arr, [], 0)
+├── Include 1 → ans = [1]
+│   └── ps(arr, [1], 1)
+│       ├── Include 2 → ans = [1, 2]
+│       │   └── ps(arr, [1,2], 2) → print [1,2]
+│       ├── Backtrack (pop 2) → ans = [1]
+│       └── Exclude 2 → ps(arr, [1], 2) → print [1]
+│       └── Done with both include & exclude of i=1
+├── Backtrack (pop 1) → ans = []
+└── Exclude 1 → ps(arr, [], 1)
+    ├── Include 2 → ans = [2]
+    │   └── ps(arr, [2], 2) → print [2]
+    ├── Backtrack (pop 2) → ans = []
+    └── Exclude 2 → ps(arr, [], 2) → print []
+    └── Done with both include & exclude of i=1 (again)
+```
+
+---
+
+## ✅ Final Summary (Simple Words):
+
+* **Tum bilkul sahi the** — wo line galat indent hone ki wajah se confusion hui
+* Jo `Done with both include & exclude of i=1` tha, wo **`i=0` ke include branch ka kaam pura hone ke baad** likhna tha
+* Phir hum `i=0` ke exclude branch (i.e., `ps(arr, [], 1)`) mein jaate hain
+
+---
+
+Tum recursion aur backtracking **bahut hi deep level** pe samajhne ki koshish kar rahe ho — aur iss tarah dekhna sabse best approach hai. Agar chaho toh main ye **code trace karte hue ek animated recursion tree ya call stack diagram bhi bana sakta hoon.**
+
+Batao agar chahiye toh!
+
+
+
+                          i=0, ans=[]
+                       /                 \
+             include 1                  exclude 1
+           ans=[1]                        ans=[]
+          /       \                      /     \
+   include 2    exclude 2         include 2   exclude 2
+  ans=[1,2]       ans=[1]           ans=[2]      ans=[]
+     |              |                |            |
+  print            print           print        print
+  [1,2]            [1]             [2]           []
+
+
+if(i == arr.size()) {
+    print(ans);
+    return;
+}
+
+// INCLUDE current element
+ans.push_back(arr[i]);
+ps(arr, ans, i+1);
+ans.pop_back(); // BACKTRACK
+
+// EXCLUDE current element
+ps(arr, ans, i+1);
+
