@@ -1,0 +1,83 @@
+Bhai, samjhata hoon ekdum mast tareeke se! 🔥 **Tera doubt recursion ke return ke baad backtracking ke swap pe hai**, toh chal ekdum **step-by-step dry run** dekhte hain. 🚀
+
+---
+
+## **Core Concept: Backtracking Order**
+Jab recursion **base case tak pahunchta hai**, **uske baad execution return hoti hai wapas uske caller function pe**. Lekin jo **for-loop chali thi, wo ab bhi continue karti hai!**  
+Iss wajah se **return ke baad swap nums[j], nums[index] hota hai** taaki **previous swap ko undo kar sake!**  
+
+---
+## **Example Dry Run: nums = [1, 2, 3]**
+### **Function Execution Order**
+#### **Step 1: `index = 0` pe function call**
+```cpp
+per(nums = [1, 2, 3], ans, index = 0)
+```
+- **for-loop (j = 0 → 2) chalega**
+- `swap(nums[0], nums[0]);` (no change)
+- **Recursive Call:** `per(nums, ans, index = 1)`
+
+---
+
+#### **Step 2: `index = 1` pe function call**
+```cpp
+per(nums = [1, 2, 3], ans, index = 1)
+```
+- **for-loop (j = 1 → 2) chalega**
+- `swap(nums[1], nums[1]);` (no change)
+- **Recursive Call:** `per(nums, ans, index = 2)`
+
+---
+
+#### **Step 3: `index = 2` pe function call**
+```cpp
+per(nums = [1, 2, 3], ans, index = 2)
+```
+- **for-loop (j = 2 → 2) chalega**
+- `swap(nums[2], nums[2]);` (no change)
+- **Base case hit hota hai → `ans.push_back([1, 2, 3])`**
+- **Return hota hai index = 1 pe!**
+  
+---
+### **Backtracking Start: Return to index=1**
+- **Recursion se return aaya!**  
+- **Ab function ka bacha hua part execute hoga!**  
+- Yaha for-loop ab bhi chal raha hai!  
+- **swap(nums[2], nums[2]);** hota hai kyunki ye loop ka part hai!  
+- Loop continue karega aur **next swap (nums[1], nums[2]) hoga!**  
+- Isliye **wapas index = 2 pe call jayegi!**
+
+---
+### **Ek Line Me Answer**
+Recursion **return hota hai**, **lekin loop wapas continue hota hai**, isliye **swap nums[j], nums[index] execute hota hai!** Ye **undo karta hai previous swap**, taaki next iteration correct state pe ho. 🔥
+
+Samajh aaya bhai? **Agar ab bhi koi doubt ho, bata!** 🚀😃
+
+
+class Solution {
+public:
+   void printsubset(vector<int>&nums,vector<vector<int>>&ans,vector<int>&path,int i,int sum){
+    if(i==nums.size()){
+        ans.push_back(sum);
+        return;
+    }
+    path.push_back(sum+nums[i]);
+    printsubset(nums,ans,path,i+1,sum+nums[i]);
+    path.pop_back();
+    printsubset(nums,ans,path,i+1,sum+nums[i]);
+
+
+   }
+
+
+    vector<vector<int>> subsets(vector<int>& nums) {
+        vector<vector<int>>ans;
+        vector<int>path;
+        
+         printsubset(nums,ans,path,0,0);
+         return ans;
+
+
+        
+    }
+};
