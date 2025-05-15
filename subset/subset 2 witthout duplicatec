@@ -1,0 +1,91 @@
+Great question, bhai! **`result.push_back(subset);`** ka kaam **har naye subset ko store karna** hai. Chal isko **deeply samjhte hain** ek mast example ke saath. 🚀🔥
+
+---
+
+### **🔍 `result.push_back(subset);` Kya Karta Hai?**
+Ye **subset vector ko result me store karta hai**, taaki **sab possible subsets collect ho sake**.
+
+#### **Example Input:**
+```cpp
+vector<int> nums = {1,2,2};
+```
+Initially:
+```cpp
+vector<vector<int>> result;   // Empty result container
+vector<int> subset;           // Empty subset container
+```
+Har baar **`subset` ko `result.push_back(subset);` se store kiya jata hai!**
+
+---
+
+### **🛠 Dry Run Step-by-Step**
+#### **Initial Call: `backtrack(0, nums, subset, result);`**
+- **Subset abhi empty hai → `[]`**
+- **Store in `result`:** `result.push_back([]);`
+- **Loop start:** `i = 0`
+  
+---
+#### **First Iteration: `i = 0`**
+- **Add nums[0] → `subset = [1]`**
+- **Store in `result`:** `result.push_back([1]);`
+- **Recursive Call:** `backtrack(1, nums, subset, result);`
+
+---
+#### **Second Iteration: `i = 1`**
+- **Add nums[1] → `subset = [1,2]`**
+- **Store in `result`:** `result.push_back([1,2]);`
+- **Recursive Call:** `backtrack(2, nums, subset, result);`
+
+---
+#### **Third Iteration: `i = 2`**
+- **Add nums[2] → `subset = [1,2,2]`**
+- **Store in `result`:** `result.push_back([1,2,2]);`
+- **Recursive Call:** `backtrack(3, nums, subset, result);`
+- **Base case hit → Return!**
+- **Backtrack:** `subset.pop_back();` → `subset = [1,2]`
+- **Loop continues at index = 1 → Backtrack again!**
+
+---
+### **🎯 Final Output**
+```
+[
+  [], [1], [1,2], [1,2,2], [2], [2,2]
+]
+```
+💡 **Notice:** Har step pe `subset.push_back()` se elements add ho rahe hain, **aur result.push_back(subset); se subsets store ho rahe hain!** 🔥
+
+---
+
+### **⚡ Summary**
+✔ **`result.push_back(subset);` har naye subset ko store karta hai**  
+✔ **Recursion naye elements add karta hai**  
+✔ **Backtracking undo karta hai**  
+✔ **Duplicates ko ignore karta hai**  
+
+Samajh aaya bhai? **Agar ab bhi koi doubt ho to bata!** 🚀🔥😃 class Solution {
+public:
+   void printsubset(vector<int>&nums,vector<vector<int>>&ans,vector<int>&path,int i,int sum){
+    if(i==nums.size()){
+        ans.push_back(sum);
+        return;
+    }
+    path.push_back(sum+nums[i]);
+    printsubset(nums,ans,path,i+1,sum+nums[i]);
+    path.pop_back();
+    printsubset(nums,ans,path,i+1,sum+nums[i]);
+
+
+   }
+
+
+    vector<vector<int>> subsets(vector<int>& nums) {
+        vector<vector<int>>ans;
+        vector<int>path;
+        
+         printsubset(nums,ans,path,0,0);
+         return ans;
+
+
+        
+    }
+};
