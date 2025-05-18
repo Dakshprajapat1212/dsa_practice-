@@ -1,0 +1,264 @@
+Finding a **pair with a given sum** in an array is a classic problem. Let’s break down multiple **optimized solutions** based on different requirements:
+
+---
+
+## 🧩 Problem Statement:
+
+**Given an array of integers `arr[]` and a target sum `k`, find if there exists a pair of elements whose sum is equal to `k`.**
+
+---
+
+## ✅ 1. **Brute Force Approach (Unoptimized)**
+
+**Time Complexity:** O(n²)
+**Space Complexity:** O(1)
+
+```cpp
+bool hasPairBruteForce(int arr[], int n, int k) {
+    for (int i = 0; i < n; ++i) {
+        for (int j = i + 1; j < n; ++j) {
+            if (arr[i] + arr[j] == k) {
+                return true;
+            }
+        }
+    }
+    return false;
+}
+```
+
+---
+
+## 🚀 2. **Optimized using Hashing (Best for Unsorted Arrays)**
+
+**Time Complexity:** O(n)
+**Space Complexity:** O(n)
+
+```cpp
+#include <unordered_set>
+
+bool hasPairHashing(int arr[], int n, int k) {
+    std::unordered_set<int> s;
+    for (int i = 0; i < n; ++i) {
+        int complement = k - arr[i];
+        if (s.count(complement)) {
+            return true;
+        }
+        s.insert(arr[i]);
+    }
+    return false;
+}
+```
+
+🔎 **Explanation:**
+
+* Store elements in a hash set as we traverse.
+* For each element, check if `k - arr[i]` exists in the set.
+
+---
+
+## ⏳ 3. **Optimized using Two-Pointer Technique (for Sorted Arrays)**
+
+**Time Complexity:** O(n log n) (due to sorting)
+**Space Complexity:** O(1)
+
+```cpp
+#include <algorithm>
+
+bool hasPairTwoPointer(int arr[], int n, int k) {
+    std::sort(arr, arr + n);  // Sort the array
+    int left = 0, right = n - 1;
+
+    while (left < right) {
+        int sum = arr[left] + arr[right];
+        if (sum == k) return true;
+        else if (sum < k) left++;
+        else right--;
+    }
+    return false;
+}
+```
+
+---
+
+## 🧠 Which one to use?
+
+| Situation                 | Best Method                 |
+| ------------------------- | --------------------------- |
+| Array is unsorted         | Hashing                     |
+| Array is already sorted   | Two-pointer                 |
+| Minimal space is needed   | Two-pointer (after sorting) |
+| Learning / First approach | Brute Force                 |
+
+---
+
+## 🛠 Bonus: Find All Unique Pairs (Hashing Version)
+
+```cpp
+#include <unordered_set>
+#include <set>
+#include <vector>
+using namespace std;
+
+vector<pair<int, int>> findAllPairs(int arr[], int n, int k) {
+    unordered_set<int> seen;
+    set<pair<int, int>> result;  // to avoid duplicates
+
+    for (int i = 0; i < n; ++i) {
+        int complement = k - arr[i];
+        if (seen.count(complement)) {
+            result.insert({min(arr[i], complement), max(arr[i], complement)});
+        }
+        seen.insert(arr[i]);
+    }
+
+    return vector<pair<int, int>>(result.begin(), result.end());
+}
+```
+
+---
+
+Would you like me to explain the code line-by-line or convert it to another language like Python or Java?
+Sure, Daksh! Let's **explain all optimized approaches** to find a pair of numbers in an array that sum up to a target value `k`. We’ll break down the logic, advantages, disadvantages, and when to use each.
+
+---
+
+## ✅ 1. **Brute Force Approach**
+
+### 🔧 Logic:
+
+* Check all possible pairs in the array using two nested loops.
+* For every element `arr[i]`, loop through `arr[j]` (`j > i`) and check if `arr[i] + arr[j] == k`.
+
+### 💡 Code Idea:
+
+```cpp
+for (int i = 0; i < n; i++) {
+    for (int j = i + 1; j < n; j++) {
+        if (arr[i] + arr[j] == k)
+            return true;
+    }
+}
+```
+
+### ⏱️ Time Complexity: O(n²)
+
+### 🧠 Space Complexity: O(1)
+
+### ✅ Pros:
+
+* Very simple and easy to understand.
+
+### ❌ Cons:
+
+* Not efficient for large arrays.
+
+### 🧪 When to use:
+
+* For learning or very small arrays.
+
+---
+
+## 🚀 2. **Hashing Approach (Best for Unsorted Arrays)**
+
+### 🔧 Logic:
+
+* Use a hash set to store elements we have already seen.
+* For each element `arr[i]`, check if `k - arr[i]` exists in the set.
+* If it exists, we found a pair.
+
+### 💡 Code Idea:
+
+```cpp
+unordered_set<int> s;
+for (int i = 0; i < n; i++) {
+    int complement = k - arr[i];
+    if (s.count(complement)) return true;
+    s.insert(arr[i]);
+}
+```
+
+### ⏱️ Time Complexity: O(n)
+
+### 🧠 Space Complexity: O(n)
+
+### ✅ Pros:
+
+* Very fast and efficient.
+* Works on unsorted arrays.
+
+### ❌ Cons:
+
+* Uses extra space for the hash set.
+
+### 🧪 When to use:
+
+* Use this when the array is **unsorted** and you want **fast performance**.
+
+---
+
+## ⏳ 3. **Two-Pointer Approach (For Sorted Arrays)**
+
+### 🔧 Logic:
+
+* First, sort the array.
+* Use two pointers: one at the start (`left`) and one at the end (`right`).
+* If `arr[left] + arr[right] == k`, pair found.
+* If the sum is smaller, move `left` forward.
+* If the sum is greater, move `right` backward.
+
+### 💡 Code Idea:
+
+```cpp
+sort(arr, arr + n);
+int left = 0, right = n - 1;
+while (left < right) {
+    int sum = arr[left] + arr[right];
+    if (sum == k) return true;
+    else if (sum < k) left++;
+    else right--;
+}
+```
+
+### ⏱️ Time Complexity: O(n log n) (due to sorting)
+
+### 🧠 Space Complexity: O(1)
+
+### ✅ Pros:
+
+* Efficient when the array is already sorted.
+* No extra space needed.
+
+### ❌ Cons:
+
+* Requires sorting first (O(n log n)) if the array is unsorted.
+
+### 🧪 When to use:
+
+* Use when array is already sorted or can be sorted and memory usage must be low.
+
+---
+
+## 📊 Summary Table:
+
+| Approach    | Time Complexity | Space Complexity | Suitable For                        | Uses Sorting? |
+| ----------- | --------------- | ---------------- | ----------------------------------- | ------------- |
+| Brute Force | O(n²)           | O(1)             | Very small arrays                   | ❌             |
+| Hashing     | O(n)            | O(n)             | Fast, unsorted arrays               | ❌             |
+| Two-Pointer | O(n log n)      | O(1)             | Sorted arrays or memory-limited use | ✅ (if needed) |
+
+---
+
+## ❓ Example:
+
+**Input:** `arr = [8, 4, 1, 6]`, `k = 10`
+
+### Hashing:
+
+* i = 0: arr\[i] = 8 → 10 - 8 = 2 → not in set → insert 8
+* i = 1: arr\[i] = 4 → 10 - 4 = 6 → not in set → insert 4
+* i = 2: arr\[i] = 1 → 10 - 1 = 9 → not in set → insert 1
+* i = 3: arr\[i] = 6 → 10 - 6 = 4 → 4 **is in set** → pair found: (6, 4)
+
+---
+
+Would you like me to show how to return all unique pairs as well, or convert this explanation to a visual diagram or a Python version?
