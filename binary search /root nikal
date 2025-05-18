@@ -1,0 +1,27 @@
+class Solution {
+public:
+    int nthRoot(int n, int m) {
+        int left = 1, right = m;
+        
+        while (left <= right) {
+            int mid = left + (right - left) / 2;
+            long long power = 1;
+            
+            // Compute mid^n using integer multiplication to avoid precision issues
+            for (int i = 0; i < n; i++) {
+                power *= mid;
+                if (power > m) break; // Prevent unnecessary computation if power exceeds m
+            }
+            
+            if (power == m) {
+                return mid; // Found integer nth root
+            } else if (power > m) {
+                right = mid - 1;
+            } else {
+                left = mid + 1;
+            }
+        }
+        
+        return -1; // No valid integer nth root found
+    }
+};
