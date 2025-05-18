@@ -1,0 +1,294 @@
+#include <iostream>
+#include <vector>
+#include <algorithm>
+using namespace std;
+
+// Count how many elements are <= target in a sorted row
+int countLessThanEqual(vector<int>& row, int target) {
+    return upper_bound(row.begin(), row.end(), target) - row.begin();
+}
+
+// Find median using binary search
+int findMedian(vector<vector<int>>& matrix) {
+    int rows = matrix.size();
+    int cols = matrix[0].size();
+
+    int low = matrix[0][0];
+    int high = matrix[0][cols - 1];
+
+    // Find global min and max from matrix
+    for (int i = 0; i < rows; i++) {
+        low = min(low, matrix[i][0]);
+        high = max(high, matrix[i][cols - 1]);
+    }
+
+    int desired = (rows * cols + 1) / 2;
+
+    while (low < high) {
+        int mid = (low + high) / 2;
+        int count = 0;
+
+        for (int i = 0; i < rows; i++) {
+            count += countLessThanEqual(matrix[i], mid);
+        }
+
+        if (count < desired) {
+            low = mid + 1;
+        } else {
+            high = mid;
+        }
+    }
+
+    return low;
+}
+
+int main() {
+    vector<vector<int>> mat = {
+        {1, 3, 5},
+        {2, 6, 9},
+        {3, 6, 9}
+    };
+
+    int median = findMedian(mat);
+    cout << "Median is: " << median << endl;
+
+    return 0;
+}
+Bilkul bhai! Ab main tujhe ek **chhoti si matrix** par **binary search se median nikalne ka dry run** karke samjhaata hoon step-by-step. Aankhon ke saamne sab kuch clear ho jaayega 💯
+
+---
+
+## 🧮 Given Matrix:
+
+```
+[1, 3, 5]
+[2, 6, 9]
+[3, 6, 9]
+```
+
+🧠 Important:
+
+* Matrix size: 3×3 = 9 elements
+* Median = 5th smallest element = position `(9+1)/2 = 5`
+
+---
+
+## ✅ Step 1: Initial Setup
+
+* low = smallest element in matrix = **1**
+* high = largest element in matrix = **9**
+
+So binary search range = `[1, 9]`
+
+---
+
+## ✅ Step 2: Start Binary Search
+
+### 🔹 Iteration 1:
+
+* `mid = (1 + 9) / 2 = 5`
+
+Now **count how many elements ≤ 5** in matrix:
+
+* Row 1: \[1, 3, 5] → 3 elements ≤ 5
+* Row 2: \[2, 6, 9] → 1st and 2nd ≤ 5 → 2 elements
+* Row 3: \[3, 6, 9] → 1st only → 1 element
+
+✅ Total count = 3 + 2 + 1 = **6 elements ≤ 5**
+
+👀 Desired count = **5** (we want at least 5 numbers ≤ median)
+
+👉 Since **count (6) ≥ 5**, we can try smaller value
+Set:
+
+* `high = mid = 5`
+
+---
+
+### 🔹 Iteration 2:
+
+* `low = 1`, `high = 5`
+* `mid = (1 + 5)/2 = 3`
+
+Count how many elements ≤ 3:
+
+* Row 1: \[1, 3, 5] → 1,3 → 2 elements
+* Row 2: \[2, 6, 9] → 1 element
+* Row 3: \[3, 6, 9] → 1st and 2nd → 2 elements
+
+✅ Total count = 2 + 1 + 2 = **5**
+
+👉 count = 5 = desired
+
+So we try smaller again to check better answer.
+
+Set:
+
+* `high = mid = 3`
+
+---
+
+### 🔹 Iteration 3:
+
+* `low = 1`, `high = 3`
+* `mid = (1 + 3)/2 = 2`
+
+Count ≤ 2:
+
+* Row 1: \[1, 3, 5] → 1 element
+* Row 2: \[2, 6, 9] → 1st → 1 element
+* Row 3: \[3, 6, 9] → 0 elements
+
+✅ Total = 1 + 1 + 0 = **2** < 5
+
+Too small → need bigger numbers
+
+Set:
+
+* `low = mid + 1 = 3`
+
+---
+
+### 🔹 Iteration 4:
+
+* `low = 3`, `high = 3`
+
+☑️ Binary search ends. **low == high**, so:
+
+### ✅ Median = **3**
+
+---
+
+## 🎉 Final Answer: `3`
+
+---
+
+## 🔁 Summary Table of Steps:
+
+| Iteration | mid | count (≤ mid) | Action   |
+| --------- | --- | ------------- | -------- |
+| 1         | 5   | 6             | high = 5 |
+| 2         | 3   | 5             | high = 3 |
+| 3         | 2   | 2             | low = 3  |
+| 4         | 3   | ---           | Done     |
+
+---
+
+Bhai agar ab bhi koi step unclear ho toh bas bata, aur simple kar dunga aur examples bhi de dunga ✅
+   Sahi pakde bhai! Tumhara doubt bilkul valid hai — chalo main **seedhe aur simple bhaasha** mein samjhaata hoon.
+
+---
+
+## 🔴 Tumhara Doubt:
+
+> "Agar median ka matlab middle hota hai, toh hum simply sab elements ko ek vector mein store karke sort kyu nahi kar lete? Phir seedha mid index leke median nikal lein?"
+
+### ✅ **Bilkul sahi socha!**
+
+Haan, yeh approach **kaam karti hai**, par yeh method:
+
+* **Time-consuming** ho jaati hai jab matrix bada ho
+* Time complexity: **O(N × M log(N × M))**
+
+---
+
+## 🤖 Binary Search Wali Approach Kyu?
+
+Ye approach **optimized hai** jab matrix **bahut bada** ho (1000×1000 ya zyada), aur tum **extra space bhi nahi lena chahte**.
+
+> Binary Search se hum **sort kiye bina** directly median nikaal lete hain, bina matrix ke elements ek jagah store kiye.
+
+---
+
+## 🔄 Tumhara Method (Brute Force):
+
+```cpp
+vector<int> temp;
+for (int i = 0; i < n; i++)
+    for (int j = 0; j < m; j++)
+        temp.push_back(mat[i][j]);
+
+sort(temp.begin(), temp.end());
+
+int median = temp[(n*m)/2];
+```
+
+### ✅ Ye 100% sahi hai
+
+Lekin: Time = **O(N×M log(N×M))**, Space = **O(N×M)**
+
+---
+
+## 🔥 Ab samjho Binary Search Wali Trick
+
+Binary Search yahan **index pe nahi**, **value range pe hota hai**.
+
+### 💡 Important Concept:
+
+Median = **wo number jiske niche aadhe elements aate ho**
+
+---
+
+## 🔴 Toh Count Kya Hai?
+
+### Let’s say:
+
+Matrix me 9 elements hai → Median = **5th chhota element**
+
+Agar tum kisi value `mid = 6` pe ho:
+
+* Tum count karte ho **kitne elements 6 se chhote ya barabar hain?**
+* Agar 6 se chhote/barabar elements **5 ya usse zyada hain**, toh median **6 ya usse chhoti value** ho sakti hai.
+* Agar kam hain, toh median **6 se badi value** ho sakti hai.
+
+### 🧠 Isiliye hum count use karte hain.
+
+---
+
+## 🔁 Binary Search Steps Recap:
+
+1. Set `low = min element`, `high = max element`
+2. Do binary search:
+
+   * `mid = (low + high)/2`
+   * For each row: count how many elements ≤ mid (using `upper_bound`)
+   * If count < (total/2 + 1) → median > mid → shift `low = mid + 1`
+   * Else → median ≤ mid → shift `high = mid`
+3. Jab tak low == high → that’s the median
+
+---
+
+## 🧪 Ek Chhota Example:
+
+Matrix:
+
+```
+[1, 3, 5]
+[2, 6, 9]
+[3, 6, 9]
+```
+
+Total elements = 9
+Median = 5th smallest element
+
+Binary search:
+
+* Try `mid = 5`
+* Count how many numbers ≤ 5 → 5 numbers (1,2,3,3,5)
+* That’s perfect! Median = 5
+
+---
+
+## 🔚 Summary:
+
+| Approach      | Time Complexity   | Space  |
+| ------------- | ----------------- | ------ |
+| Brute Force   | O(N×M log(N×M))   | O(N×M) |
+| Binary Search | O(32 × N × log M) | O(1)   |
+
+---
+
+Bhai agar matrix chhoti ho toh **brute force** method best hai
+Agar matrix badi ho (10^6 elements), tab **binary search wali trick** efficient hoti hai
+
+Agar chahe toh dono method ka code de sakta hoon C++ me side-by-side. Bole toh bhejta hoon 🔥
