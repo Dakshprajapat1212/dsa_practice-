@@ -1,0 +1,249 @@
+Bhai **`k`** ek number hai jo batata hai ki **kaunsa bada ya chhota element** chahiye array se.
+
+---
+
+## 🔍 **K ka Matlab Simple Bhasha Mein:**
+
+Agar tu **array ko descending sort kare (bade se chhote)**, toh:
+
+* `k = 1` → sabse **bada** element (1st largest)
+* `k = 2` → doosra sabse **bada** element (2nd largest)
+* `k = 3` → teesra sabse **bada** element (3rd largest)
+* ... and so on
+
+---
+
+## 🔢 **Example se samajh:**
+
+```python
+nums = [7, 2, 9, 4, 6]
+k = 2
+```
+
+Sorted descending: `[9, 7, 6, 4, 2]`
+
+* 1st largest (k = 1) → 9
+* 2nd largest (k = 2) → 7 ✅
+* 3rd largest (k = 3) → 6
+
+So agar `k = 2`, tu 2nd sabse bada number return karega — yeh hai `7`.
+
+---
+
+## ✅ Final Line:
+
+> **k ka matlab hai: sorted array (descending order) mein k-th position par jo element hoga, wahi chahiye.**
+
+Samajh aaya bhai? Agar still confusion hai, bol dena ek aur example deta hoon.
+Code
+Testcase
+Test Result
+Test Result
+215\. Kth Largest Element in an Array
+Medium
+Topics
+Companies
+Given an integer array nums and an integer k, return the kth largest element in the array.
+
+Note that it is the kth largest element in the sorted order, not the kth distinct element.
+
+Can you solve it without sorting?
+
+Example 1:
+
+Input: nums = \[3,2,1,5,6,4], k = 2
+Output: 5
+Example 2:
+
+Input: nums = \[3,2,3,1,2,4,5,5,6], k = 4
+Output: 4
+
+Constraints:
+
+1 <= k <= nums.length <= 105
+-104 <= nums\[i] <= 10  bhai yeh question kuch smj nhi arha bai
+Bilkul bhai, main tujhe simple language mein samjhaata hoon. Tu tension mat le, yeh question bilkul easy hai agar step by step soche.
+
+---
+
+## ✅ **Question Ka Matlab Kya Hai?**
+
+Tu ek **array** (`nums`) aur ek number `k` de raha hai.
+
+Tujhe **k-th largest element** return karna hai.
+
+**Important baat:** Yeh element **sorted array mein k-th position pe hota hai jab array descending order mein sort ho.**
+
+---
+
+### 🔍 Example 1:
+
+```plaintext
+Input: nums = [3,2,1,5,6,4], k = 2
+```
+
+Agar tu is array ko **descending sort** kare:
+`[6, 5, 4, 3, 2, 1]`
+
+* 1st largest = 6
+* 2nd largest = 5 ✅
+  \=> **Output: 5**
+
+---
+
+### 🔍 Example 2:
+
+```plaintext
+Input: nums = [3,2,3,1,2,4,5,5,6], k = 4
+```
+
+Sorted descending:
+`[6, 5, 5, 4, 3, 3, 2, 2, 1]`
+
+* 4th largest = 4 ✅
+  \=> **Output: 4**
+
+---
+
+## 🔁 **Can You Solve It Without Sorting?**
+
+Yes, and that’s the challenge.
+
+### ✅ 2 Tarike hain:
+
+#### 1. **Using Min Heap (Priority Queue)** – Recommended
+
+* Min-heap of size `k`
+* Maintain `k` largest elements
+* Top of heap will be **k-th largest**
+
+#### 2. **Quick Select Algorithm** – Advanced (like quicksort partitioning)
+
+---
+
+## 🧠 **High-Level Approach (Min Heap Idea):**
+
+1. Heap size k
+2. Traverse array, add elements to heap
+3. If size > k, remove smallest (heapq.heappop)
+4. At the end, heap\[0] is k-th largest
+
+---
+
+## 💡 Summary:
+
+* Question bol raha: `"k-th largest element chahiye, sorted array mein agar descending karo toh."`
+* **Sorting allowed nahi** hai ideally (efficient solution chahiye)
+* Use heap (priority queue) for best results
+* Tujhe bas `k` tak ka sabse bada element chahiye, na ki unique ya distinct
+
+---
+
+Chahe tu heap se kare ya sorting se pehle code likh, main check kar dunga.
+Bata chahta hai sort se kar ke dekhna pehle ya heap se sikhna hai seedha?
+#include <queue>
+using namespace std;
+
+class Solution {
+public:
+    int findKthLargest(vector<int>& nums, int k) {
+        // Min-heap to store k largest elements
+        priority_queue<int, vector<int>, greater<int>> minHeap;
+
+        for (int num : nums) {
+            minHeap.push(num);
+
+            // If heap size exceeds k, remove smallest
+            if (minHeap.size() > k) {
+                minHeap.pop();
+            }
+        }
+
+        // Top of the heap is the k-th largest element
+        return minHeap.top();
+    }
+};
+
+
+manully #include <iostream>
+#include <vector>
+using namespace std;
+
+class MinHeap {
+public:
+    vector<int> heap;
+
+    void insert(int val) {
+        heap.push_back(val);
+        heapifyUp(heap.size() - 1);
+    }
+
+    void heapifyUp(int index) {
+        while (index > 0) {
+            int parent = (index - 1) / 2;
+            if (heap[parent] > heap[index]) {
+                swap(heap[parent], heap[index]);
+                index = parent;
+            } else {
+                break;
+            }
+        }
+    }
+
+    void heapifyDown(int index) {
+        int size = heap.size();
+        while (index < size) {
+            int left = 2 * index + 1;
+            int right = 2 * index + 2;
+            int smallest = index;
+
+            if (left < size && heap[left] < heap[smallest]) {
+                smallest = left;
+            }
+            if (right < size && heap[right] < heap[smallest]) {
+                smallest = right;
+            }
+
+            if (smallest != index) {
+                swap(heap[index], heap[smallest]);
+                index = smallest;
+            } else {
+                break;
+            }
+        }
+    }
+
+    void removeTop() {
+        if (heap.empty()) return;
+        heap[0] = heap.back();
+        heap.pop_back();
+        heapifyDown(0);
+    }
+
+    int top() {
+        return heap[0];
+    }
+
+    int size() {
+        return heap.size();
+    }
+};
+
+class Solution {
+public:
+    int findKthLargest(vector<int>& nums, int k) {
+        MinHeap minHeap;
+
+        for (int num : nums) {
+            minHeap.insert(num);
+
+            // If heap size > k, remove smallest element
+            if (minHeap.size() > k) {
+                minHeap.removeTop();
+            }
+        }
+
+        // k-th largest element is at the root
+        return minHeap.top();
+    }
+};
