@@ -1,7 +1,7 @@
 
 #include <bits/stdc++.h>
 using namespace std;
-
+here r is column
 int nCr(int n, int r) {
     long long res = 1;
 
