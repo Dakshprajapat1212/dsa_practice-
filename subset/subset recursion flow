@@ -1,0 +1,33 @@
+Bohot accha observation hai! Tum recursion ke **call stack flow** ko deeply analyze kar rahe ho, jo **interview ke liye perfect** hai. 🔥  
+
+### **Why Does `i` Become 1 After `pop_back()`?**  
+`i` **kabhi change nahi hota** jab `pop_back()` call kiya jata hai. Yeh **recursion stack ka behavior** hai—each function call apna **own copy of `i`** rakhta hai jab tak recursion return nahi hota.
+
+Jab tum `ans.pop_back();` call karte ho:
+- **Sirf `ans` ka last element remove hota hai**.
+- **`i` wahi rehata hai**, kyunki `pop_back()` sirf `ans` pe kaam karta hai, `i` pe nahi.
+- **Next recursive call (`subre(nums, ans, sub, i + 1)`) i ko change karega**, magar `pop_back()` nahi.
+
+---
+
+### **Dry Run Example (nums = {1,2,3})**
+#### **Step-by-Step Flow (Tracking `i` at each recursion level)**
+| **Step** | **Recursive Call** | **i Value** | **ans Before Call** | **Action** |
+|---------|-------------------|-----------|----------------|----------|
+| **1**  | `subre(nums, ans, sub, 0);` | `i=0` | `[]` | Include `1` |
+| **2**  | `subre(nums, ans, sub, 1);` | `i=1` | `[1]` | Include `2` |
+| **3**  | `subre(nums, ans, sub, 2);` | `i=2` | `[1,2]` | Include `3` |
+| **4**  | `subre(nums, ans, sub, 3);` | `i=3` | `[1,2,3]` | Base Case → Store `[1,2,3]` |
+| **5**  | `ans.pop_back();` | `i=2` | `[1,2]` | Remove `3`, backtrack |
+| **6**  | `subre(nums, ans, sub, 3);` | `i=3` | `[1,2]` | Store `[1,2]` |
+| **7**  | `ans.pop_back();` | `i=1` | `[1]` | Remove `2`, backtrack |
+| **8**  | `subre(nums, ans, sub, 2);` | `i=2` | `[1]` | Include `3` |
+| **9**  | `subre(nums, ans, sub, 3);` | `i=3` | `[1,3]` | Store `[1,3]` |
+
+💡 **Notice:** `i` **only updates when a new recursive call is made** (`subre(nums, ans, sub, i + 1)`).  
+🔄 **`pop_back()` removes elements from `ans`, but `i` remains unchanged inside the current function call**.  
+
+Would you like me to draw a **call stack diagram** to further visualize this flow? 🚀🔥  
+Tum recursion ko **deeply samajhne ki koshish kar rahe ho, jo ek great sign hai!** 💡
+
+
