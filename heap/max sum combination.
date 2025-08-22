@@ -1,0 +1,136 @@
+brute force
+
+To solve the **Maximum Sum Combination** problem using brute force, we aim to find all possible combinations of sums by picking one element from each of two arrays and then selecting the top `k` largest sums. Here's how you can approach it:
+
+---
+
+### 💡 Problem Statement Recap
+Given:
+- Two arrays `A[]` and `B[]`
+- An integer `K`
+
+Goal:
+- Find the top `K` maximum sum combinations from all possible pairs `(A[i] + B[j])`.
+
+---
+
+### 🛠️ Brute Force Approach
+
+#### ✅ Steps:
+1. **Generate all possible pairs**:
+   - For every element in `A`, pair it with every element in `B`.
+2. **Compute the sum of each pair**.
+3. **Store all sums in a list**.
+4. **Sort the list in descending order**.
+5. **Return the top `K` elements**.
+
+#### 🧾 Code Example (C++ style logic):
+```cpp
+vector<int> maxSumCombinations(vector<int>& A, vector<int>& B, int K) {
+    vector<int> sums;
+    for (int i = 0; i < A.size(); i++) {
+        for (int j = 0; j < B.size(); j++) {
+            sums.push_back(A[i] + B[j]);
+        }
+    }
+    sort(sums.begin(), sums.end(), greater<int>());
+    vector<int> result(sums.begin(), sums.begin() + K);
+    return result;
+}
+```
+
+---
+
+### 📊 Time Complexity
+- **Generating pairs**: \( O(N^2) \) where \( N \) is the size of each array.
+- **Sorting**: \( O(N^2 \log N^2) \)
+- **Overall**: Not efficient for large arrays, but works fine for small inputs.
+
+---
+
+### 🧪 Example
+```text
+A = [1, 4, 2, 3]
+B = [2, 5, 1, 6]
+K = 3
+
+All possible sums:
+[3, 6, 2, 7, 6, 9, 5, 10, 3, 6, 2, 7, 4, 7, 3, 8]
+
+Sorted:
+[10, 9, 8, 7, 7, 7, 6, 6, 6, 5, 4, 3, 3, 3, 2, 2]
+
+Top 3:
+[10, 9, 8]
+```
+
+---
+
+If you're curious, I can also show you how to optimize this using a heap and a visited set like in the [GitHub dry run example](https://github.com/Dakshprajapat1212/dsa_practice-/new/main/heap). Want to try that next?
+
+
+
+Absolutely! Let’s walk through a **dry run** of the **Maximum Sum Combination** problem using a heap and a `set<pair<int, int>>` to track visited index pairs.
+
+---
+
+### 🧪 Problem Recap:
+You're given two arrays:
+- `a[] = {1, 4, 2, 3}`
+- `b[] = {2, 5, 1, 6}`
+- `k = 3`
+
+Goal: Find the top 3 maximum sum combinations by adding one element from `a` and one from `b`.
+
+---
+
+### 🧠 Step-by-Step Dry Run:
+
+#### 1️⃣ Sort both arrays in descending order:
+```
+a = [4, 3, 2, 1]
+b = [6, 5, 2, 1]
+```
+
+#### 2️⃣ Initialize:
+- Max heap: `[(4+6, (0,0))] = [10]`
+- Visited set: `{(0,0)}`
+- Result: `[]`
+
+---
+
+#### 🔁 Iteration 1:
+- Pop `(10, (0,0))` → result = `[10]`
+- Push `(a[1]+b[0], (1,0)) = 3+6 = 9` → heap: `[9]`, visited: `{(0,0), (1,0)}`
+- Push `(a[0]+b[1], (0,1)) = 4+5 = 9` → heap: `[9, 9]`, visited: `{(0,0), (1,0), (0,1)}`
+
+---
+
+#### 🔁 Iteration 2:
+- Pop `9` (could be either (1,0) or (0,1)) → result = `[10, 9]`
+- Suppose we pop `(1,0)`:
+  - Push `(a[2]+b[0], (2,0)) = 2+6 = 8` → heap: `[9, 8]`, visited: `{(0,0), (1,0), (0,1), (2,0)}`
+  - Push `(a[1]+b[1], (1,1)) = 3+5 = 8` → heap: `[9, 8, 8]`, visited: `{(0,0), (1,0), (0,1), (2,0), (1,1)}`
+
+---
+
+#### 🔁 Iteration 3:
+- Pop `9` (now from `(0,1)`) → result = `[10, 9, 9]`
+- Push `(a[1]+b[1], (1,1))` → already visited
+- Push `(a[0]+b[2], (0,2)) = 4+2 = 6` → heap: `[8, 8, 6]`, visited: `{..., (0,2)}`
+
+---
+
+### ✅ Final Result:
+```
+Top 3 sums: [10, 9, 9]
+```
+
+---
+
+### 🔍 Key Observations:
+- The `set<pair<int, int>>` ensures we don’t revisit the same index pair.
+- The heap always gives us the next largest sum.
+- Sorting upfront helps us start from the largest possible combinations.
+
+Would you like a visual diagram of the heap and set at each step? Or want to try a custom input together?
