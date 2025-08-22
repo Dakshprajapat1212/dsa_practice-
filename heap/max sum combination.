@@ -9,7 +9,7 @@ Given:
 - Two arrays `A[]` and `B[]`
 - An integer `K`
 
-Goal:
+Goal
 - Find the top `K` maximum sum combinations from all possible pairs `(A[i] + B[j])`.
 
 ---
@@ -133,4 +133,239 @@ Top 3 sums: [10, 9, 9]
 - The heap always gives us the next largest sum.
 - Sorting upfront helps us start from the largest possible combinations.
 
-Would you like a visual diagram of the heap and set at each step? Or want to try a custom input together?
+W#include <iostream>
+#include <vector>
+#include <queue>
+#include <set>
+#include <algorithm>
+using namespace std;
+
+vector<int> maxSumCombinations(vector<int>& A, vector<int>& B, int K) {
+    int N = A.size();
+    sort(A.begin(), A.end(), greater<int>());
+    sort(B.begin(), B.end(), greater<int>());
+
+    priority_queue<pair<int, pair<int, int>>> maxHeap;
+    set<pair<int, int>> visited;
+
+    maxHeap.push({A[0] + B[0], {0, 0}});
+    visited.insert({0, 0});
+
+    vector<int> result;
+
+    while (K-- && !maxHeap.empty()) {
+        auto top = maxHeap.top(); maxHeap.pop();
+        result.push_back(top.first);
+
+        int i = top.second.first;
+        int j = top.second.second;
+
+        if (i + 1 < N && visited.insert({i + 1, j}).second) {
+            maxHeap.push({A[i + 1] + B[j], {i + 1, j}});
+        }
+
+        if (j + 1 < N && visited.insert({i, j + 1}).second) {
+            maxHeap.push({A[i] + B[j + 1], {i, j + 1}});
+        }
+    }
+
+    return result;
+}
+
+int main() {
+    vector<int> A = {1, 4, 2, 3};
+    vector<int> B = {2, 5, 1, 6};
+    int K = 3;
+
+    vector<int> result = maxSumCombinations(A, B, K);
+    for (int sum : result) {
+        cout << sum << " ";
+    }
+    return 0;
+}
+Excellent question! You're diving into the mechanics of how `std::set::insert()` works in C++, especially when used like this:
+
+```cpp
+visited.insert({i + 1, j}).second
+```
+
+Let’s break it down clearly:
+
+---
+
+### 🔍 What Does `insert()` Return?
+
+The `insert()` function in a `std::set` returns a **pair**:
+
+```cpp
+pair<iterator, bool>
+```
+
+#### 🔸 `.first` → an iterator pointing to the element in the set  
+#### 🔸 `.second` → a boolean:
+- `true` if the element was **successfully inserted** (i.e., it was **not already present**)
+- `false` if the element **already existed** in the set
+
+---
+
+### ✅ Example:
+
+```cpp
+set<pair<int, int>> visited;
+
+auto result1 = visited.insert({1, 2}); // returns {iterator, true}
+auto result2 = visited.insert({1, 2}); // returns {iterator, false}
+```
+
+- `result1.second == true` → because `{1, 2}` was new
+- `result2.second == false` → because `{1, 2}` was already in the set
+
+---
+
+### 🔁 In Your Code:
+
+```cpp
+if (visited.insert({i + 1, j}).second) {
+    maxHeap.push({A[i + 1] + B[j], {i + 1, j}});
+}
+```
+
+This means:
+- Try to insert the pair `(i+1, j)` into the set
+- If it **wasn't already there**, `.second` is `true`, so we push it into the heap
+- If it **was already visited**, `.second` is `false`, so we skip it
+
+---
+
+### 🧠 Summary:
+
+| Expression                     | Meaning                                 |
+|-------------------------------|-----------------------------------------|
+| `insert({i, j})`              | Try to add the pair to the set          |
+| `.first`                      | Iterator to the element in the set      |
+| `.second == true`             | Pair was new and inserted               |
+| `.second == false`            | Pair already existed, not inserted      |
+
+---
+Ah, I see what you're thinking — you're worried that if `k = 2`, and in one iteration we push **two new combinations** into the heap, we might end up with more than `k` results. But here's the key insight:
+
+### ✅ The loop only adds combinations to the heap — not to the result directly.
+
+Let’s walk through the logic carefully:
+
+---
+
+### 🔁 The Loop:
+```cpp
+while (K-- && !maxHeap.empty()) {
+    auto top = maxHeap.top(); maxHeap.pop();
+    result.push_back(top.first);
+    ...
+}
+```
+
+- This loop runs **exactly `k` times**.
+- Each time, it pops **one** element from the heap and adds it to `result`.
+- So `result.size()` will always be **exactly `k`** — no more, no less.
+
+---
+
+### 🔄 Why We Push Two Combinations:
+Inside each iteration, we push:
+- `(i+1, j)` → move down in array A
+- `(i, j+1)` → move right in array B
+
+This is done to **explore the next best possible combinations**. These are **candidates**, not guaranteed results.
+
+---
+
+### 🧠 Analogy:
+Think of the heap as a **priority inbox**:
+- You open one top message (`pop`)
+- Then you discover two new leads (`push`)
+- But you only open one message per round — so the total opened messages is still `k`
+
+---
+
+### 🧪 Example:
+If `k = 2`, the loop runs **2 times**, popping the top 2 sums.  
+Even if we push 10 combinations into the heap, we still only **pop 2**.
+
+---
+
+### 🔒 Why It’s Safe:
+- The heap can grow larger than `k`, but that’s okay — it’s just storing options.
+- The `visited` set ensures we **don’t push the same pair twice**
+- The loop ensures we **only collect `k` results**
+
+---
+
+Great question — and you're absolutely right to think critically about this. Let’s unpack why duplicates **can** happen if we’re not careful, even though we’re only pushing the “next” elements.
+
+---
+
+### 🔍 Why Duplicates Can Occur
+
+Imagine arrays `A` and `B` are both sorted in descending order. When we start from the top pair `(0, 0)`, we push:
+- `(1, 0)` → next in A
+- `(0, 1)` → next in B
+
+Now suppose in the next round we pop `(1, 0)` and push:
+- `(2, 0)`
+- `(1, 1)`
+
+Later, when we pop `(0, 1)`, we push:
+- `(1, 1)` again!
+
+💥 **Boom — duplicate!** That pair `(1, 1)` was already pushed from a different path.
+
+---
+
+### 🛡️ How We Prevent Duplicates
+
+That’s why we use a `visited` set:
+```cpp
+if (visited.insert({i, j}).second) {
+    maxHeap.push(...);
+}
+```
+
+This ensures that each `(i, j)` pair is pushed **only once**, no matter how many paths lead to it.
+
+---
+
+### 🧠 Why We Explore Both Directions
+
+Even though we only move to the “next” index in A or B, we need to explore **both directions** because the best combinations might come from either:
+- Going deeper into A (i.e., `i+1`)
+- Going deeper into B (i.e., `j+1`)
+
+Skipping one would mean missing out on potential top sums.
+
+---
+
+### 🧪 Quick Example
+
+Let’s say:
+```cpp
+A = [4, 3, 2]
+B = [5, 1, 0]
+```
+
+Start with `(0, 0)` → sum = 9  
+Push `(1, 0)` and `(0, 1)`  
+Now pop `(1, 0)` → sum = 8  
+Push `(2, 0)` and `(1, 1)`  
+Then pop `(0, 1)` → sum = 5  
+Push `(1, 1)` again — unless we check `visited`!
+
+---
+
+So yes, even though we’re only pushing “next” elements, **multiple paths can lead to the same pair**, and that’s why the `visited` set is essential.
+
+Want me to sketch out a heap evolution diagram for a small example? It’s a great way to visualize this.
+
+So no worries — pushing multiple combinations per round is **intentional and safe**. It’s what makes the algorithm efficient and correct.
+
+Would you like a visual diagram of how the heap and set evolve over each iteration? It can really help solidify this concept.
+Would you like to see this behavior in a small runnable code snippet to test it yourself? 
