@@ -1,7 +1,7 @@
  https://youtu.be/BmZnJehDzyU?si=MkcQVZx7MdwTZRuV
- ![Uploading Screenshot 2025-08-28 at 10.46.47 AM.png…]()
 
 To delete the **middle element of a stack using recursion**, without using any extra data structures, here’s a simple and clear explanation:
+<img width="1470" height="956" alt="Screenshot 2025-08-28 at 10 49 39 AM" src="https://github.com/user-attachments/assets/6eaabe48-6721-4996-b8a2-0917c305fc78" />
 
 ---
 
