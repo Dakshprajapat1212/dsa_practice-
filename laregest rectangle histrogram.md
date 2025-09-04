@@ -341,6 +341,6 @@ Do you want me to prepare that next?
 
 
 
-
+https://takeuforward.org/data-structure/area-of-largest-rectangle-in-histogram/
 
 
