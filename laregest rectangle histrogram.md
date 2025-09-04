@@ -1,3 +1,178 @@
+ठीक है — अब मैं तुम्हारे दिए हुए कोड का **हर लाइन के साथ** पूरा dry run कराता हूँ, ताकि तुम्हें बिल्कुल clear हो जाए कि कौन‑सी लाइन कब execute होती है और उस समय variables/stack में क्या बदलाव आता है।  
+हम तुम्हारे ही input `{2, 1, 5, 6, 2, 3, 1}` से चलेंगे।
+
+---
+
+## कोड (reference)
+
+```cpp
+#include <bits/stdc++.h>
+using namespace std;
+
+class Solution {
+  public:
+    int largestRectangleArea(vector<int> &histo) {
+      stack<int> st;
+      int maxA = 0;
+      int n = histo.size();
+      for (int i = 0; i <= n; i++) {
+        while (!st.empty() && (i == n || histo[st.top()] >= histo[i])) {
+          int height = histo[st.top()];
+          st.pop();
+          int width;
+          if (st.empty())
+            width = i;
+          else
+            width = i - st.top() - 1;
+          maxA = max(maxA, width * height);
+        }
+        st.push(i);
+      }
+      return maxA;
+    }
+};
+
+int main() {
+  vector<int> histo = {2, 1, 5, 6, 2, 3, 1};
+  Solution obj;
+  cout << "The largest area in the histogram is " 
+       << obj.largestRectangleArea(histo) << endl;
+  return 0;
+}
+```
+
+---
+
+## Dry Run — Step by Step
+
+### **Line by Line Execution**
+
+#### **main()**
+1. `vector<int> histo = {2, 1, 5, 6, 2, 3, 1};`  
+   → histogram heights set.
+
+2. `Solution obj;`  
+   → object create.
+
+3. `obj.largestRectangleArea(histo)` call होता है।
+
+---
+
+#### **largestRectangleArea()**
+- **Line:** `stack<int> st;`  
+  → खाली stack create.
+
+- **Line:** `int maxA = 0;`  
+  → अभी तक max area = 0.
+
+- **Line:** `int n = histo.size();`  
+  → n = 7.
+
+---
+
+### **Outer for loop** → `for (int i = 0; i <= n; i++)`
+
+---
+
+#### **i = 0**  
+- `while` check: stack empty → skip.  
+- `st.push(0)` → stack = [0] (bar height 2).
+
+---
+
+#### **i = 1** (height = 1)  
+- `while`: histo[0] = 2 ≥ 1 → pop index 0:  
+  - height = 2  
+  - stack empty → width = i = 1  
+  - area = 2 × 1 = 2 → maxA = 2  
+- फिर `while` false (stack empty).  
+- Push 1 → stack = [1] (height 1).
+
+---
+
+#### **i = 2** (height = 5)  
+- histo[1] = 1 < 5 → skip while.  
+- Push 2 → stack = [1, 2].
+
+---
+
+#### **i = 3** (height = 6)  
+- histo[2] = 5 < 6 → skip while.  
+- Push 3 → stack = [1, 2, 3].
+
+---
+
+#### **i = 4** (height = 2)  
+- histo[3] = 6 ≥ 2 → pop index 3:  
+  - height = 6  
+  - width = i - st.top() - 1 = 4 - 2 - 1 = 1  
+  - area = 6 × 1 = 6 → maxA = 6  
+- histo[2] = 5 ≥ 2 → pop index 2:  
+  - height = 5  
+  - width = 4 - 1 - 1 = 2  
+  - area = 5 × 2 = 10 → maxA = 10  
+- histo[1] = 1 < 2 → stop while.  
+- Push 4 → stack = [1, 4].
+
+---
+
+#### **i = 5** (height = 3)  
+- histo[4] = 2 < 3 → skip while.  
+- Push 5 → stack = [1, 4, 5].
+
+---
+
+#### **i = 6** (height = 1)  
+- histo[5] = 3 ≥ 1 → pop index 5:  
+  - height = 3  
+  - width = 6 - 4 - 1 = 1  
+  - area = 3 × 1 = 3 → maxA = 10  
+- histo[4] = 2 ≥ 1 → pop index 4:  
+  - height = 2  
+  - width = 6 - 1 - 1 = 4  
+  - area = 2 × 4 = 8 → maxA = 10  
+- histo[1] = 1 ≥ 1 → pop index 1:  
+  - height = 1  
+  - stack empty → width = i = 6  
+  - area = 1 × 6 = 6 → maxA = 10  
+- Push 6 → stack = [6].
+
+---
+
+#### **i = 7** (sentinel step, height treated as 0)  
+- histo[6] = 1 ≥ 0 → pop index 6:  
+  - height = 1  
+  - stack empty → width = i = 7  
+  - area = 1 × 7 = 7 → maxA = 10  
+- Push 7 → stack = [7] (अब loop खत्म)।
+
+---
+
+### **Return**
+- `return maxA;` → 10.
+
+---
+
+#### **main() resumes**
+- Prints: `"The largest area in the histogram is 10"`
+
+---
+
+## **Final Output**
+```
+The largest area in the histogram is 10
+```
+
+---
+
+✅ अब अगर तुम चाहो तो मैं तुम्हें इसी dry run को **टेबल फॉर्मेट** में दे सकता हूँ, जिसमें हर step पर `i`, `stack`, `height`, `width`, `area`, और `maxA` साफ‑साफ दिखेगा — जिससे revision और भी आसान हो जाएगा।  
+क्या मैं वो टेबल बना दूँ?
+
+
+
+
+
+
 <img width="1470" height="956" alt="Screenshot 2025-09-01 at 5 40 37 PM" src="https://github.com/user-attachments/assets/0e499c7a-7314-4b33-bcae-d0395460ebef" />
 ### Largest Rectangle in Histogram test cases
 
