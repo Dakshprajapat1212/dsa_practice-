@@ -1,9 +1,4 @@
-# Rotten <img width="1470" height="956" alt="Screenshot 2025-09-05 at 8 18 07 PM" src="https://github.com/user-attachments/assets/897abb65-5f2e-4ee7-b97b-b26bbca8b41c" />
-https://takeuforward.org/data-structure/rotten-oranges-min-time-to-rot-all-oranges-bfs/ 
-
-
-
-Absolutely! Here's a full breakdown of your C++ code in **Striver-style**, with diagrams, dry run, and explanation of each step — including why this approach works and how it differs slightly from the classic BFS version.
+# Rotten Absolutely! Here's a full breakdown of your C++ code in **Striver-style**, with diagrams, dry run, and explanation of each step — including why this approach works and how it differs slightly from the classic BFS version.
 
 ---
 
@@ -200,7 +195,47 @@ Minimum Number of Minutes Required 4
 ---
 
 If you'd like, I can help you visualize this with actual grid diagrams and arrows like Striver does in his slides — just say the word!
-Oranges: Striver-Style Notes
+<img width="1470" height="956" alt="Screenshot 2025-09-05 at 8 18 07 PM" src="https://github.com/user-attachments/assets/897abb65-5f2e-4ee7-b97b-b26bbca8b41c" />
+https://takeuforward.org/data-structure/rotten-oranges-min-time-to-rot-all-oranges-bfs/ 
+
+
+
+Absolutely! Here's a full breakdown of your C++ code in **Striver-style**, with diagrams, dry run, and explanation of each step — including why this approach works and how it differs slightly from the classic BFS version.
+
+---
+
+## 🔍 Problem Recap
+
+You're given a grid:
+- `0` → empty cell  
+- `1` → fresh orange  
+- `2` → rotten orange  
+
+Each minute, rotten oranges infect adjacent fresh ones (up/down/left/right). Return the **minimum time** to rot all oranges, or `-1` if impossible.
+
+---
+
+## ✅ Approach Summary
+
+This code uses **multi-source BFS**:
+- All rotten oranges are pushed into a queue initially.
+- Each level of BFS represents one minute.
+- Fresh oranges are counted (`tot`), and each time one rots, `cnt` is incremented.
+- If `cnt == tot` at the end, all oranges rotted → return `days`.
+- Else, return `-1`.
+
+---
+
+## 🧠 Why This Works
+
+- BFS spreads layer by layer, simulating simultaneous infection.
+- Each level of the queue represents oranges rotting at the same time.
+- DFS would go deep and not simulate time correctly without extra logic.
+
+---
+
+
+
 <img width="1470" height="956" alt="Screenshot 2025-09-05 at 8 18 07 PM" src="https://github.com/user-attachments/assets/897abb65-5f2e-4ee7-b97b-b26bbca8b41c" />
 
 use visted marircix and queue
