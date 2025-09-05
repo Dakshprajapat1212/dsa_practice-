@@ -3,48 +3,203 @@ https://takeuforward.org/data-structure/rotten-oranges-min-time-to-rot-all-orang
 
 
 
-#include<bits/stdc++.h>
-using namespace std;
-    int orangesRotting(vector<vector<int>>& grid) {
-        if(grid.empty()) return 0;
-        int m = grid.size(), n = grid[0].size(), days = 0, tot = 0, cnt = 0;
-        queue<pair<int, int>> rotten;
-        for(int i = 0; i < m; ++i){
-            for(int j = 0; j < n; ++j){
-                if(grid[i][j] != 0) tot++;
-                if(grid[i][j] == 2) rotten.push({i, j});
-            }
+Absolutely! Here's a full breakdown of your C++ code in **Striver-style**, with diagrams, dry run, and explanation of each step — including why this approach works and how it differs slightly from the classic BFS version.
+
+---
+
+## 🔍 Problem Recap
+
+You're given a grid:
+- `0` → empty cell  
+- `1` → fresh orange  
+- `2` → rotten orange  
+
+Each minute, rotten oranges infect adjacent fresh ones (up/down/left/right). Return the **minimum time** to rot all oranges, or `-1` if impossible.
+
+---
+
+## ✅ Approach Summary
+
+This code uses **multi-source BFS**:
+- All rotten oranges are pushed into a queue initially.
+- Each level of BFS represents one minute.
+- Fresh oranges are counted (`tot`), and each time one rots, `cnt` is incremented.
+- If `cnt == tot` at the end, all oranges rotted → return `days`.
+- Else, return `-1`.
+
+---
+
+## 🧠 Why This Works
+
+- BFS spreads layer by layer, simulating simultaneous infection.
+- Each level of the queue represents oranges rotting at the same time.
+- DFS would go deep and not simulate time correctly without extra logic.
+
+---
+
+## 🧪 Dry Run with Grid
+
+Initial Grid:
+```
+2 1 1
+1 1 0
+0 1 1
+```
+
+### Step 1: Initialization
+
+- `tot = 7` (all non-zero cells)
+- Rotten queue: `[(0,0)]`
+- `cnt = 0`, `days = 0`
+
+---
+
+### Step 2: Minute 1
+
+Process rotten `(0,0)`  
+→ Infect `(0,1)` and `(1,0)`
+
+New rotten queue: `[(0,1), (1,0)]`  
+`cnt = 1` → now 3 rotten oranges  
+`days = 1`
+
+Grid:
+```
+2 2 1
+2 1 0
+0 1 1
+```
+
+---
+
+### Step 3: Minute 2
+
+Process `(0,1)` → infect `(0,2)`  
+Process `(1,0)` → infect `(1,1)`
+
+New rotten queue: `[(0,2), (1,1)]`  
+`cnt = 3` → now 5 rotten oranges  
+`days = 2`
+
+Grid:
+```
+2 2 2
+2 2 0
+0 1 1
+```
+
+---
+
+### Step 4: Minute 3
+
+Process `(0,2)` → no fresh neighbors  
+Process `(1,1)` → infect `(2,1)`
+
+New rotten queue: `[(2,1)]`  
+`cnt = 5` → now 6 rotten oranges  
+`days = 3`
+
+Grid:
+```
+2 2 2
+2 2 0
+0 2 1
+```
+
+---
+
+### Step 5: Minute 4
+
+Process `(2,1)` → infect `(2,2)`
+
+New rotten queue: `[(2,2)]`  
+`cnt = 6` → now 7 rotten oranges  
+`days = 4`
+
+Grid:
+```
+2 2 2
+2 2 0
+0 2 2
+```
+
+---
+
+### Step 6: End
+
+Queue is empty.  
+`cnt = tot = 7` → ✅ all oranges rotted  
+Return `days = 4`
+
+---
+
+## 🧾 Code Explanation
+
+```cpp
+int orangesRotting(vector<vector<int>>& grid) {
+    if(grid.empty()) return 0;
+
+    int m = grid.size(), n = grid[0].size();
+    int days = 0, tot = 0, cnt = 0;
+    queue<pair<int, int>> rotten;
+
+    // Count total oranges and push rotten ones
+    for(int i = 0; i < m; ++i){
+        for(int j = 0; j < n; ++j){
+            if(grid[i][j] != 0) tot++;
+            if(grid[i][j] == 2) rotten.push({i, j});
         }
-        
-        int dx[4] = {0, 0, 1, -1};
-        int dy[4] = {1, -1, 0, 0};
-        
-        while(!rotten.empty()){
-            int k = rotten.size();
-            cnt += k; 
-            while(k--){
-                int x = rotten.front().first, y = rotten.front().second;
-                rotten.pop();
-                for(int i = 0; i < 4; ++i){
-                    int nx = x + dx[i], ny = y + dy[i];
-                    if(nx < 0 || ny < 0 || nx >= m || ny >= n || grid[nx][ny] != 1) continue;
-                    grid[nx][ny] = 2;
-                    rotten.push({nx, ny});
-                }
-            }
-            if(!rotten.empty()) days++;
-        }
-        
-        return tot == cnt ? days : -1;
     }
 
-    int main()
-    {
-        vector<vector<int>> v{ {2,1,1} , {1,1,0} , {0,1,1} } ;
-        int rotting = orangesRotting(v);
-        cout<<"Minimum Number of Minutes Required "<<rotting<<endl;
-        
+    // Directions: right, left, down, up
+    int dx[4] = {0, 0, 1, -1};
+    int dy[4] = {1, -1, 0, 0};
+
+    // BFS level by level
+    while(!rotten.empty()){
+        int k = rotten.size();
+        cnt += k;
+
+        while(k--){
+            int x = rotten.front().first;
+            int y = rotten.front().second;
+            rotten.pop();
+
+            for(int i = 0; i < 4; ++i){
+                int nx = x + dx[i], ny = y + dy[i];
+                if(nx < 0 || ny < 0 || nx >= m || ny >= n || grid[nx][ny] != 1) continue;
+                grid[nx][ny] = 2;
+                rotten.push({nx, ny});
+            }
+        }
+
+        if(!rotten.empty()) days++;
     }
+
+    return tot == cnt ? days : -1;
+}
+```
+
+---
+
+## 🧪 Output
+
+```cpp
+int main() {
+    vector<vector<int>> v{ {2,1,1} , {1,1,0} , {0,1,1} };
+    int rotting = orangesRotting(v);
+    cout << "Minimum Number of Minutes Required " << rotting << endl;
+}
+```
+
+**Output:**
+```
+Minimum Number of Minutes Required 4
+```
+
+---
+
+If you'd like, I can help you visualize this with actual grid diagrams and arrows like Striver does in his slides — just say the word!
 Oranges: Striver-Style Notes
 <img width="1470" height="956" alt="Screenshot 2025-09-05 at 8 18 07 PM" src="https://github.com/user-attachments/assets/897abb65-5f2e-4ee7-b97b-b26bbca8b41c" />
 
