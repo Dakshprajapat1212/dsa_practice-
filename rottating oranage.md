@@ -1,5 +1,8 @@
 # Rotten <img width="1470" height="956" alt="Screenshot 2025-09-05 at 8 18 07 PM" src="https://github.com/user-attachments/assets/897abb65-5f2e-4ee7-b97b-b26bbca8b41c" />
-https://takeuforward.org/data-structure/rotten-oranges-min-time-to-rot-all-oranges-bfs/
+https://takeuforward.org/data-structure/rotten-oranges-min-time-to-rot-all-oranges-bfs/ 
+
+
+
 #include<bits/stdc++.h>
 using namespace std;
     int orangesRotting(vector<vector<int>>& grid) {
