@@ -1,7 +1,98 @@
-# Rotten Absolutely! Here's a full breakdown of your C++ code in **Striver-style**, with diagrams, dry run, and explanation of each step — including why this approach works and how it differs slightly from the classic BFS version.
+# Rotten Yes Hannu ✅
 
----
+The code Striver wrote (BFS with queue + visited array) is the standard optimal solution for the Rotten Oranges problem. Let me break it down for you clearly:
 
+⸻
+
+🔹 Complexity
+	•	Time Complexity:
+	•	Every cell (at most n \times m) is inserted into the queue at most once.
+	•	For each cell, we check 4 directions.
+	•	⏱️ Overall: O(n × m)
+	•	Space Complexity:
+	•	vis[n][m] + queue (can hold at most n × m elements).
+	•	🗂️ Overall: O(n × m)
+
+This is the best you can do, because you must look at all cells anyway.
+
+⸻
+
+🔹 Can it be Improved?
+
+Yes, but only slightly in code style, not in complexity:
+	1.	Remove vis[][]:
+Instead of maintaining a separate visited matrix, you can directly modify the grid itself (change 1 → 2 when it gets rotten). This saves space and makes the code cleaner.
+	•	Space drops to O(1) extra (ignoring queue).
+	•	Still O(n × m) time.
+	2.	Multi-source BFS is already optimal:
+Starting BFS from all rotten oranges at once is the best way (because infection spreads simultaneously).
+
+⸻
+
+🔹 Most Optimized Code (without vis[][])
+
+#include <bits/stdc++.h>
+using namespace std;
+
+int orangesRotting(vector<vector<int>>& grid) {
+    int n = grid.size(), m = grid[0].size();
+    queue<pair<pair<int,int>, int>> q; 
+    int cntFresh = 0;
+
+    // Step 1: Push all initially rotten oranges
+    for(int i = 0; i < n; i++) {
+        for(int j = 0; j < m; j++) {
+            if(grid[i][j] == 2) {
+                q.push({{i,j}, 0});
+            }
+            if(grid[i][j] == 1) cntFresh++;
+        }
+    }
+
+    int tm = 0, cnt = 0;
+    int drow[] = {-1, 0, 1, 0};
+    int dcol[] = {0, 1, 0, -1};
+
+    // Step 2: BFS
+    while(!q.empty()) {
+        int r = q.front().first.first;
+        int c = q.front().first.second;
+        int t = q.front().second;
+        q.pop();
+
+        tm = max(tm, t);
+
+        for(int i = 0; i < 4; i++) {
+            int nr = r + drow[i], nc = c + dcol[i];
+            if(nr >= 0 && nr < n && nc >= 0 && nc < m && grid[nr][nc] == 1) {
+                grid[nr][nc] = 2; // rot it
+                q.push({{nr, nc}, t+1});
+                cnt++;
+            }
+        }
+    }
+
+    return (cnt == cntFresh) ? tm : -1;
+}
+
+int main() {
+    vector<vector<int>> grid = {
+        {2,1,1},
+        {1,1,0},
+        {0,1,1}
+    };
+
+    cout << "Minimum time required: " << orangesRotting(grid) << endl;
+}
+
+
+⸻
+
+✅ This is the most optimized form of Striver’s code — same logic, but no extra vis[][].
+
+⸻
+
+Do you want me to dry run both versions side by side so you can see why vis[][] is not needed?
 ## 🔍 Problem Recap
 
 You're given a grid:
