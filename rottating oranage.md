@@ -1,4 +1,69 @@
-# Rotten Oranges: Striver-Style Notes
+# Rotten <img width="1470" height="956" alt="Screenshot 2025-09-05 at 8 18 07 PM" src="https://github.com/user-attachments/assets/897abb65-5f2e-4ee7-b97b-b26bbca8b41c" />
+https://takeuforward.org/data-structure/rotten-oranges-min-time-to-rot-all-oranges-bfs/
+#include<bits/stdc++.h>
+using namespace std;
+    int orangesRotting(vector<vector<int>>& grid) {
+        if(grid.empty()) return 0;
+        int m = grid.size(), n = grid[0].size(), days = 0, tot = 0, cnt = 0;
+        queue<pair<int, int>> rotten;
+        for(int i = 0; i < m; ++i){
+            for(int j = 0; j < n; ++j){
+                if(grid[i][j] != 0) tot++;
+                if(grid[i][j] == 2) rotten.push({i, j});
+            }
+        }
+        
+        int dx[4] = {0, 0, 1, -1};
+        int dy[4] = {1, -1, 0, 0};
+        
+        while(!rotten.empty()){
+            int k = rotten.size();
+            cnt += k; 
+            while(k--){
+                int x = rotten.front().first, y = rotten.front().second;
+                rotten.pop();
+                for(int i = 0; i < 4; ++i){
+                    int nx = x + dx[i], ny = y + dy[i];
+                    if(nx < 0 || ny < 0 || nx >= m || ny >= n || grid[nx][ny] != 1) continue;
+                    grid[nx][ny] = 2;
+                    rotten.push({nx, ny});
+                }
+            }
+            if(!rotten.empty()) days++;
+        }
+        
+        return tot == cnt ? days : -1;
+    }
+
+    int main()
+    {
+        vector<vector<int>> v{ {2,1,1} , {1,1,0} , {0,1,1} } ;
+        int rotting = orangesRotting(v);
+        cout<<"Minimum Number of Minutes Required "<<rotting<<endl;
+        
+    }
+Oranges: Striver-Style Notes
+<img width="1470" height="956" alt="Screenshot 2025-09-05 at 8 18 07 PM" src="https://github.com/user-attachments/assets/897abb65-5f2e-4ee7-b97b-b26bbca8b41c" />
+
+use visted marircix and queue
+<img width="1470" height="956" alt="Screenshot 2025-09-05 at 8 16 02 PM" src="https://github.com/user-attachments/assets/9a4d742c-5983-4f86-8511-f9df40072cb8" />
+
+
+<img width="1470" height="956" alt="Screenshot 2025-09-05 at 8 16 11 PM" src="https://github.com/user-attachments/assets/d2c28763-adf8-48b5-b1c7-0a6c35f1cc96" />
+
+<img width="1470" height="956" alt="Screenshot 2025-09-05 at 8 17 08 PM" src="https://github.com/user-attachments/assets/6e8ffe15-b47f-489a-ac8b-f9ce6cc9eefc" />
+ <img width="1470" height="956" alt="Screenshot 2025-09-05 at 8 19 03 PM" src="https://github.com/user-attachments/assets/a4fd4826-1d49-4d4a-a561-b27fb8c88734" />
+
+<img width="1470" height="956" alt="Screenshot 2025-09-05 at 8 22 06 PM" src="https://github.com/user-attachments/assets/183ae04e-2a2e-4530-b83c-c9a90bd3b4f1" />
+
+
+
+<img width="1470" height="956" alt="Screenshot 2025-09-05 at 8 19 49 PM" src="https://github.com/user-attachments/assets/395f9ff4-1629-41ce-bcd4-a3b5fefac8c9" />
+
+
+
+<img width="1470" height="956" alt="Screenshot 2025-09-05 at 8 21 44 PM" src="https://github.com/user-attachments/assets/eb6cbfec-4909-4ab9-a0e5-3ecc042983f7" />
+
 
 
 # Step-by-Step Striver-Style Solution
