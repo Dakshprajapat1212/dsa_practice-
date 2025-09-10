@@ -1,3 +1,11 @@
+
+<img width="1470" height="956" alt="Screenshot 2025-09-10 at 5 08 55 PM" src="https://github.com/user-attachments/assets/505783a8-1967-4cf2-bbab-aabe494df45f" />
+
+
+
+
+
+
 https://www.geeksforgeeks.org/array-implementation-of-queue-simple/
 Course
 Blogs
