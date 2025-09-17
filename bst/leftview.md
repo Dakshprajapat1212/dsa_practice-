@@ -1,3 +1,91 @@
+
+
+To solve the **Left View of a Binary Tree**, you want to capture the **first node at each level** when the tree is viewed from the left side. There are two popular ways to do this: **Level Order (BFS)** and **Depth First Search (DFS)**. Let’s break both down simply.
+
+---
+
+## ✅ 1. BFS Approach (Using Queue)
+
+### 💡 Idea:
+- Traverse level by level using a queue.
+- For each level, the **first node you dequeue** is the leftmost node — add it to the result.
+
+### 🧱 Steps:
+1. Initialize a queue with the root.
+2. While queue is not empty:
+   - Get the size of the current level.
+   - For each node in this level:
+     - If it's the **first node**, add it to the result.
+     - Push its left and right children into the queue.
+
+### 🧑‍💻 Code Sketch (C++):
+```cpp
+vector<int> leftView(Node* root) {
+    vector<int> view;
+    if (!root) return view;
+
+    queue<Node*> q;
+    q.push(root);
+
+    while (!q.empty()) {
+        int levelSize = q.size();
+        for (int i = 0; i < levelSize; ++i) {
+            Node* curr = q.front(); q.pop();
+            if (i == 0) view.push_back(curr->data); // first node of level
+            if (curr->left) q.push(curr->left);
+            if (curr->right) q.push(curr->right);
+        }
+    }
+    return view;
+}
+```
+
+---
+
+## ✅ 2. DFS Approach (Recursive)
+
+### 💡 Idea:
+- Traverse the tree in **preorder** (root-left-right).
+- Keep track of the **maximum level visited so far**.
+- If current level is greater than max level, it means this is the first node at this level — add it.
+
+### 🧱 Steps:
+1. Start from root at level 0.
+2. Recursively go left first, then right.
+3. Track max level reached so far.
+
+### 🧑‍💻 Code Sketch (C++):
+```cpp
+void dfs(Node* root, int level, int& maxLevel, vector<int>& view) {
+    if (!root) return;
+    if (level > maxLevel) {
+        view.push_back(root->data);
+        maxLevel = level;
+    }
+    dfs(root->left, level + 1, maxLevel, view);
+    dfs(root->right, level + 1, maxLevel, view);
+}
+
+vector<int> leftView(Node* root) {
+    vector<int> view;
+    int maxLevel = -1;
+    dfs(root, 0, maxLevel, view);
+    return view;
+}
+```
+
+---
+
+## 🧠 Which one to use?
+- **BFS** is easier to understand and implement.
+- **DFS** is elegant and uses recursion — good for interviews.
+
+You can see the full problem and examples on [GeeksforGeeks Left View Practice Page](https://www.geeksforgeeks.org/problems/left-view-of-binary-tree/1).
+
+Want me to dry-run this on a sample tree so you can see how nodes are picked?
+
+
+
 Great question — and the answer is **no**, this code is **not using preorder traversal**.
 
 ---
